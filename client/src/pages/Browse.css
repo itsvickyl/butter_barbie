@@ -1,0 +1,91 @@
+.browse-page {
+          padding-top: 88px;
+          max-width: 1100px;
+          margin: 0 auto;
+          padding-left: 24px;
+          padding-right: 24px;
+          padding-bottom: 80px;
+        }
+        .browse-header {
+          margin-bottom: 32px;
+        }
+        .browse-header h1 {
+          font-size: 30px;
+          font-weight: 800;
+          letter-spacing: -0.02em;
+          margin-bottom: 6px;
+        }
+        .browse-header p {
+          color: var(--text-secondary);
+          font-size: 15px;
+        }
+        .browse-toolbar {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          margin-bottom: 32px;
+        }
+        .search-box {
+          position: relative;
+        }
+        .search-icon {
+          position: absolute;
+          left: 16px;
+          top: 50%;
+          transform: translateY(-50%);
+          color: var(--text-muted);
+          pointer-events: none;
+        }
+        .search-input {
+          padding-left: 46px;
+          padding: 14px 16px 14px 46px;
+          font-size: 15px;
+        }
+        .filter-group {
+          display: flex;
+          gap: 10px;
+          flex-wrap: wrap;
+        }
+        .filter-select {
+          flex: 1;
+          min-width: 150px;
+          appearance: none;
+          cursor: pointer;
+          padding: 10px 16px;
+          font-size: 13px;
+        }
+        .browse-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+          gap: 16px;
+        }
+        .browse-loading {
+          display: flex;
+          justify-content: center;
+          padding: 80px;
+          color: var(--accent);
+        }
+        .browse-empty {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 80px 24px;
+          text-align: center;
+        }
+        .empty-icon {
+          color: var(--text-muted);
+          margin-bottom: 16px;
+          opacity: 0.5;
+        }
+        .browse-empty h3 {
+          font-size: 20px;
+          font-weight: 700;
+          margin-bottom: 8px;
+          color: var(--text-secondary);
+        }
+        .browse-empty p {
+          font-size: 14px;
+          color: var(--text-muted);
+          max-width: 400px;
+        }

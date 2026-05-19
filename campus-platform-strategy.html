@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CampusShare — Hackathon Blueprint</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f0e0c;
+    --paper: #f5f0e8;
+    --accent: #c8401a;
+    --accent2: #2d6a4f;
+    --accent3: #e9c46a;
+    --muted: #7c7060;
+    --rule: #d4c8b0;
+    --card: #fffdf7;
+    --shadow: rgba(15,14,12,0.12);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* NOISE TEXTURE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.5;
+  }
+
+  .page {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 48px 32px 80px;
+  }
+
+  /* ═══════════════ MASTHEAD ═══════════════ */
+  .masthead {
+    border-top: 4px solid var(--ink);
+    border-bottom: 2px solid var(--ink);
+    padding: 28px 0 20px;
+    margin-bottom: 48px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 16px;
+  }
+  .masthead-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .masthead h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(40px, 6vw, 72px);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+  }
+  .masthead h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+  .masthead-meta {
+    text-align: right;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+  .badge {
+    display: inline-block;
+    background: var(--accent);
+    color: white;
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    margin-bottom: 6px;
+  }
+
+  /* ═══════════════ SECTION HEADERS ═══════════════ */
+  .section {
+    margin-bottom: 52px;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .section-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    background: rgba(200,64,26,0.08);
+    border: 1px solid rgba(200,64,26,0.2);
+    padding: 3px 8px;
+    min-width: 36px;
+    text-align: center;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  /* ═══════════════ CALLOUT BOX ═══════════════ */
+  .callout {
+    border-left: 3px solid var(--accent);
+    background: var(--card);
+    padding: 18px 20px;
+    margin-bottom: 20px;
+    box-shadow: 3px 3px 0 var(--rule);
+  }
+  .callout p { font-size: 13px; }
+  .callout strong { font-family: 'Syne', sans-serif; font-size: 13px; color: var(--accent); }
+
+  .callout-green {
+    border-left-color: var(--accent2);
+    box-shadow: 3px 3px 0 rgba(45,106,79,0.15);
+  }
+  .callout-green strong { color: var(--accent2); }
+
+  /* ═══════════════ CARDS GRID ═══════════════ */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    padding: 20px;
+    box-shadow: 4px 4px 0 var(--rule);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--rule);
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .card.red::before { background: var(--accent); }
+  .card.green::before { background: var(--accent2); }
+  .card.yellow::before { background: var(--accent3); }
+
+  .card-label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .card p, .card li { font-size: 12.5px; color: #3a3530; }
+  .card ul { padding-left: 16px; }
+  .card li { margin-bottom: 4px; }
+
+  /* ═══════════════ TWO-COL ═══════════════ */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 600px) {
+    .two-col { grid-template-columns: 1fr; }
+    .masthead { grid-template-columns: 1fr; }
+    .masthead-meta { text-align: left; }
+  }
+
+  /* ═══════════════ TABLE ═══════════════ */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    background: var(--card);
+    box-shadow: 4px 4px 0 var(--rule);
+  }
+  .data-table th {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 10px 14px;
+    text-align: left;
+  }
+  .data-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+  .data-table tr:hover td { background: rgba(200,64,26,0.03); }
+  .tag {
+    display: inline-block;
+    font-size: 10px;
+    padding: 2px 7px;
+    border: 1px solid currentColor;
+    border-radius: 2px;
+    margin: 1px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+  .tag-red { color: var(--accent); }
+  .tag-green { color: var(--accent2); }
+  .tag-yellow { color: #9c7c1a; }
+  .tag-blue { color: #1a5c9c; }
+
+  /* ═══════════════ TIMELINE ═══════════════ */
+  .timeline {
+    position: relative;
+    padding-left: 36px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 14px;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: var(--rule);
+  }
+  .tl-item {
+    position: relative;
+    margin-bottom: 24px;
+  }
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -28px;
+    top: 5px;
+    width: 12px;
+    height: 12px;
+    border: 2px solid var(--ink);
+    background: var(--paper);
+  }
+  .tl-item.done::before { background: var(--accent2); border-color: var(--accent2); }
+  .tl-item.active::before { background: var(--accent); border-color: var(--accent); }
+
+  .tl-time {
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 3px;
+  }
+  .tl-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .tl-desc {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* ═══════════════ SCHEMA BOX ═══════════════ */
+  .schema-box {
+    background: #1a1814;
+    color: #e8dfc8;
+    padding: 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11.5px;
+    line-height: 1.8;
+    overflow-x: auto;
+    box-shadow: 4px 4px 0 var(--rule);
+  }
+  .schema-box .kw { color: #c8401a; }
+  .schema-box .type { color: #e9c46a; }
+  .schema-box .comment { color: #5c5548; }
+  .schema-box .entity { color: #7ec8a0; }
+
+  /* ═══════════════ ARCH DIAGRAM ═══════════════ */
+  .arch-diagram {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    padding: 24px;
+    box-shadow: 4px 4px 0 var(--rule);
+    text-align: center;
+  }
+  .arch-layer {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  .arch-box {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 8px 16px;
+    letter-spacing: 0.05em;
+    min-width: 90px;
+  }
+  .arch-box.outline {
+    background: transparent;
+    border: 2px solid var(--ink);
+    color: var(--ink);
+  }
+  .arch-box.accent {
+    background: var(--accent);
+  }
+  .arch-box.green {
+    background: var(--accent2);
+  }
+  .arch-arrow {
+    text-align: center;
+    color: var(--muted);
+    font-size: 18px;
+    margin-bottom: 8px;
+    letter-spacing: 16px;
+  }
+  .arch-label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ═══════════════ PRIORITY MATRIX ═══════════════ */
+  .priority-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    box-shadow: 4px 4px 0 var(--rule);
+  }
+  .priority-cell {
+    background: var(--card);
+    padding: 16px;
+  }
+  .priority-cell h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .priority-cell ul { list-style: none; padding: 0; }
+  .priority-cell li { font-size: 12px; padding: 3px 0; }
+  .priority-cell li::before { margin-right: 8px; }
+  .cell-must h4 { color: var(--accent); }
+  .cell-should h4 { color: #1a5c9c; }
+  .cell-could h4 { color: var(--accent2); }
+  .cell-wont h4 { color: var(--muted); }
+  .cell-must li::before { content: '✦'; color: var(--accent); }
+  .cell-should li::before { content: '●'; color: #1a5c9c; }
+  .cell-could li::before { content: '◆'; color: var(--accent2); }
+  .cell-wont li::before { content: '○'; color: var(--muted); }
+
+  /* ═══════════════ ROLES TABLE ═══════════════ */
+  .roles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+  }
+  .role-card {
+    border: 1px solid var(--rule);
+    background: var(--card);
+    padding: 16px;
+    box-shadow: 3px 3px 0 var(--rule);
+  }
+  .role-card .role-icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+    display: block;
+  }
+  .role-card h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .role-card p { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+  .role-card ul { list-style: none; padding: 0; }
+  .role-card li { font-size: 11px; padding: 2px 0; }
+  .role-card li::before { content: '→ '; color: var(--accent); }
+
+  /* ═══════════════ FOOTER ═══════════════ */
+  .footer {
+    border-top: 2px solid var(--ink);
+    padding-top: 20px;
+    margin-top: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: var(--muted);
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .footer strong {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--ink);
+  }
+
+  /* PRINT */
+  @media print {
+    body::before { display: none; }
+    .card:hover { transform: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- MASTHEAD -->
+  <div class="masthead">
+    <div>
+      <div class="masthead-eyebrow">Hackathon Preparation Blueprint · 2025</div>
+      <h1>Campus<em>Share</em><br>Platform</h1>
+    </div>
+    <div class="masthead-meta">
+      <span class="badge">Confidential Strategy</span><br>
+      Academic Resource<br>Sharing Platform<br>
+      <br>
+      Day 0 Planning Doc<br>
+      <em style="font-family:'Lora',serif; font-size:13px;">Ready for tomorrow</em>
+    </div>
+  </div>
+
+  <!-- §1: PROBLEM FRAMING -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">§01</span>
+      <h2 class="section-title">Problem Understanding</h2>
+    </div>
+    <div class="callout">
+      <strong>Core Problem:</strong>
+      <p>Academic resources on campus are siloed — great notes, past papers, and solved assignments get lost after exams. Students spend hours hunting for materials that already exist elsewhere. There's no trusted, searchable, community-driven repository.</p>
+    </div>
+    <div class="two-col">
+      <div class="callout callout-green">
+        <strong>Key User Insight:</strong>
+        <p>There are two personas — the <em>Contributor</em> (has materials, wants recognition) and the <em>Seeker</em> (needs materials, short on time). A successful platform serves both simultaneously and rewards the contributor loop so the flywheel keeps spinning.</p>
+      </div>
+      <div class="callout">
+        <strong>Why Current Solutions Fail:</strong>
+        <p>WhatsApp groups have no search. Google Drive links expire. Library systems are bureaucratic. Existing platforms (StudyLib, Scribd) aren't campus-specific and have no community trust layer.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- §2: TECH STACK -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">§02</span>
+      <h2 class="section-title">Recommended Tech Stack</h2>
+    </div>
+    <div class="callout callout-green">
+      <strong>Guiding Principle:</strong>
+      <p>Choose technologies your team can ship fast with. Speed of delivery beats perfection of architecture at a hackathon. This stack prioritises: fast setup, good defaults, easy deployment.</p>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Layer</th>
+          <th>Recommended Choice</th>
+          <th>Why</th>
+          <th>Alternatives</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Frontend</strong></td>
+          <td>React + Vite + TailwindCSS</td>
+          <td>Fast HMR, huge ecosystem, Tailwind = no CSS bikeshedding</td>
+          <td><span class="tag tag-blue">Vue 3</span> <span class="tag tag-yellow">Next.js</span></td>
+        </tr>
+        <tr>
+          <td><strong>Backend</strong></td>
+          <td>Node.js + Express (or Fastify)</td>
+          <td>Same language full-stack, vast npm ecosystem, quick REST APIs</td>
+          <td><span class="tag tag-blue">FastAPI (Python)</span> <span class="tag tag-yellow">Django</span></td>
+        </tr>
+        <tr>
+          <td><strong>Database</strong></td>
+          <td>PostgreSQL + Prisma ORM</td>
+          <td>Type-safe queries, schema migrations, great for relational data</td>
+          <td><span class="tag tag-blue">MongoDB</span> <span class="tag tag-yellow">Supabase</span></td>
+        </tr>
+        <tr>
+          <td><strong>File Storage</strong></td>
+          <td>Cloudinary (free tier) or local /uploads</td>
+          <td>Free 25GB, handles PDFs + images, easy URL-based access</td>
+          <td><span class="tag tag-blue">AWS S3</span> <span class="tag tag-yellow">Supabase Storage</span></td>
+        </tr>
+        <tr>
+          <td><strong>Auth</strong></td>
+          <td>JWT (jsonwebtoken) + bcrypt</td>
+          <td>Simple, no third-party dependency, rolls fast</td>
+          <td><span class="tag tag-blue">Firebase Auth</span> <span class="tag tag-yellow">Clerk.dev</span></td>
+        </tr>
+        <tr>
+          <td><strong>Search</strong></td>
+          <td>PostgreSQL Full-Text Search (tsvector)</td>
+          <td>Zero extra setup, good enough for demo, built into Postgres</td>
+          <td><span class="tag tag-blue">Algolia</span> <span class="tag tag-yellow">Meilisearch</span></td>
+        </tr>
+        <tr>
+          <td><strong>Deployment</strong></td>
+          <td>Render.com (free) or Railway.app</td>
+          <td>One-click deploys, free PostgreSQL, no credit card for hackathon</td>
+          <td><span class="tag tag-blue">Vercel + Supabase</span> <span class="tag tag-yellow">Heroku</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- §3: SYSTEM ARCHITECTURE -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">§03</span>
+      <h2 class="section-title">System Architecture</h2>
+    </div>
+    <div class="arch-diagram">
+      <div class="arch-label">Client Layer</div>
+      <div class="arch-layer">
+        <span class="arch-box">Browser / React SPA</span>
+        <span class="arch-box outline">Mobile Web</span>
+      </div>
+      <div class="arch-arrow">↓ ↓</div>
+      <div class="arch-label">API Layer (REST)</div>
+      <div class="arch-layer">
+        <span class="arch-box accent">Express API Server</span>
+      </div>
+      <div class="arch-arrow">↓ ↓ ↓</div>
+      <div class="arch-label">Service Layer</div>
+      <div class="arch-layer">
+        <span class="arch-box outline">Auth Service</span>
+        <span class="arch-box outline">Upload Service</span>
+        <span class="arch-box outline">Search Service</span>
+        <span class="arch-box outline">Points Service</span>
+      </div>
+      <div class="arch-arrow">↓</div>
+      <div class="arch-label">Data Layer</div>
+      <div class="arch-layer">
+        <span class="arch-box green">PostgreSQL (Prisma)</span>
+        <span class="arch-box green">Cloudinary / File Storage</span>
+      </div>
+    </div>
+    <br>
+    <div class="callout">
+      <strong>Key API Routes to implement:</strong>
+      <p style="margin-top:8px">
+        <code>POST /auth/register</code> · <code>POST /auth/login</code><br>
+        <code>GET /resources</code> · <code>GET /resources/:id</code> · <code>POST /resources</code><br>
+        <code>GET /resources/search?q=&subject=&semester=</code><br>
+        <code>POST /resources/:id/ratings</code> · <code>GET /users/:id/profile</code><br>
+        <code>GET /resources/:id/download</code>
+      </p>
+    </div>
+  </div>
+
+  <!-- §4: DATABASE SCHEMA -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">§04</span>
+      <h2 class="section-title">Database Schema Design</h2>
+    </div>
+    <div class="schema-box">
+<span class="comment">// Prisma Schema — copy this on Day 1</span>
+
+<span class="kw">model</span> <span class="entity">User</span> {
+  id           <span class="type">String</span>     @id @default(uuid())
+  email        <span class="type">String</span>     @unique
+  name         <span class="type">String</span>
+  password     <span class="type">String</span>     <span class="comment">// bcrypt hash</span>
+  points       <span class="type">Int</span>        @default(0)
+  department   <span class="type">String?</span>
+  year         <span class="type">Int?</span>
+  resources    Resource[]
+  ratings      Rating[]
+  downloads    Download[]
+  createdAt    <span class="type">DateTime</span>   @default(now())
+}
+
+<span class="kw">model</span> <span class="entity">Resource</span> {
+  id           <span class="type">String</span>     @id @default(uuid())
+  title        <span class="type">String</span>
+  description  <span class="type">String?</span>
+  type         <span class="type">ResourceType</span>   <span class="comment">// NOTES | PAPER | BOOK | REPORT | ASSIGNMENT</span>
+  subject      <span class="type">String</span>
+  semester     <span class="type">Int</span>
+  year         <span class="type">Int</span>        <span class="comment">// academic year the resource is for</span>
+  fileUrl      <span class="type">String</span>     <span class="comment">// cloudinary/storage URL</span>
+  fileName     <span class="type">String</span>
+  fileSize     <span class="type">Int</span>        <span class="comment">// bytes</span>
+  downloadCount <span class="type">Int</span>       @default(0)
+  avgRating    <span class="type">Float</span>      @default(0)
+  tags         <span class="type">String[]</span>
+  uploaderId   <span class="type">String</span>
+  uploader     <span class="entity">User</span>       @relation(fields: [uploaderId], references: [id])
+  ratings      Rating[]
+  downloads    Download[]
+  createdAt    <span class="type">DateTime</span>   @default(now())
+
+  @@index([subject, semester])       <span class="comment">// fast filtering</span>
+}
+
+<span class="kw">model</span> <span class="entity">Rating</span> {
+  id           <span class="type">String</span>     @id @default(uuid())
+  score        <span class="type">Int</span>        <span class="comment">// 1–5</span>
+  review       <span class="type">String?</span>
+  userId       <span class="type">String</span>
+  user         <span class="entity">User</span>       @relation(fields: [userId], references: [id])
+  resourceId   <span class="type">String</span>
+  resource     <span class="entity">Resource</span>   @relation(fields: [resourceId], references: [id])
+  createdAt    <span class="type">DateTime</span>   @default(now())
+
+  @@unique([userId, resourceId])    <span class="comment">// one rating per user per resource</span>
+}
+
+<span class="kw">model</span> <span class="entity">Download</span> {
+  id           <span class="type">String</span>     @id @default(uuid())
+  userId       <span class="type">String</span>
+  user         <span class="entity">User</span>       @relation(fields: [userId], references: [id])
+  resourceId   <span class="type">String</span>
+  resource     <span class="entity">Resource</span>   @relation(fields: [resourceId], references: [id])
+  downloadedAt <span class="type">DateTime</span>   @default(now())
+}
+
+<span class="kw">enum</span> <span class="entity">ResourceType</span> {
+  NOTES | PAST_PAPER | REFERENCE_BOOK | PROJECT_REPORT | ASSIGNMENT
+}
+    </div>
+    <br>
+    <div class="callout callout-green">
+      <strong>Points Logic (simple rule):</strong>
+      <p>+10 pts on upload · +2 pts per download of your resource · +1 pt per positive rating received. Store as a running total on User.points — no need for a separate ledger at hackathon scale.</p>
+    </div>
+  </div>
+
+  <!-- §5: FEATURE PRIORITY (MoSCoW) -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">§05</span>
+      <h2 class="section-title">Feature Prioritisation — MoSCoW</h2>
+    </div>
+    <div class="priority-grid">
+      <div class="priority-cell cell-must">
+        <h4>Must Have (Core MVP)</h4>
+        <ul>
+          <li>User registration & login (JWT)</li>
+          <li>Upload resource with metadata</li>
+          <li>Browse & filter by subject/semester/type</li>
+          <li>Download a resource</li>
+          <li>Search by keyword</li>
+          <li>Contributor points display</li>
+          <li>Resource detail page</li>
+        </ul>
+      </div>
+      <div class="priority-cell cell-should">
+        <h4>Should Have (High Value)</h4>
+        <ul>
+          <li>5-star rating system</li>
+          <li>User profile page with history</li>
+          <li>Leaderboard of top contributors</li>
+          <li>Sort by: newest / most downloaded / top rated</li>
+          <li>Preview PDF in-browser</li>
+          <li>File type filter (PDF, DOCX, etc.)</li>
+        </ul>
+      </div>
+      <div class="priority-cell cell-could">
+        <h4>Could Have (Nice to Have)</h4>
+        <ul>
+          <li>Bookmarking / saved resources list</li>
+          <li>Comment threads on resources</li>
+          <li>Email verification</li>
+          <li>Related resources suggestions</li>
+          <li>Department-level filtering</li>
+          <li>Share resource via link/QR</li>
+        </ul>
+      </div>
+      <div class="priority-cell cell-wont">
+        <h4>Won't Have (Out of Scope)</h4>
+        <ul>
+          <li>Real-time chat or messaging</li>
+          <li>Plagiarism detection</li>
+          <li>Payment/premium tiers</li>
+          <li>Mobile native app</li>
+          <li>AI-generated summaries</li>
+          <li>Calendar/reminder integration</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- §6: DAY SCHEDULE -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">§06</span>
+      <h2 class="section-title">Day-of Execution Timeline</h2>
+    </div>
+    <div class="two-col">
+      <div class="timeline">
+        <div class="tl-item active">
+          <div class="tl-time">00:00 – 01:00</div>
+          <div class="tl-title">Kickoff & Setup</div>
+          <div class="tl-desc">Repo init, folder structure, install deps, configure Prisma + DB connection, agree on API contracts</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-time">01:00 – 03:30</div>
+          <div class="tl-title">Auth + DB Foundation</div>
+          <div class="tl-desc">Register/Login endpoints, JWT middleware, Prisma migrations, seed test data, test with Postman/Thunder Client</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-time">03:30 – 07:00</div>
+          <div class="tl-title">Core Features Build</div>
+          <div class="tl-desc">Upload API, file storage integration, GET /resources with filters, search endpoint, download tracking + points update</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-time">07:00 – 10:00</div>
+          <div class="tl-title">Frontend Integration</div>
+          <div class="tl-desc">Wire all API calls to React components, routing, auth flow, browse/search/upload/detail pages working end-to-end</div>
+        </div>
+      </div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-time">10:00 – 13:00</div>
+          <div class="tl-title">Should-Haves + Polish</div>
+          <div class="tl-desc">Rating system, user profile, leaderboard, sorting options, error states, loading states</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-time">13:00 – 15:00</div>
+          <div class="tl-title">UI Polish + Seed Data</div>
+          <div class="tl-desc">Add real-looking dummy data (10+ resources, multiple users), fix layout issues, responsive check, loading skeletons</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-time">15:00 – 16:30</div>
+          <div class="tl-title">Deploy + Smoke Test</div>
+          <div class="tl-desc">Push to Render/Railway, test all flows on production URL, fix any env variable issues, confirm file upload works</div>
+        </div>
+        <div class="tl-item done">
+          <div class="tl-time">16:30 – 17:00</div>
+          <div class="tl-title">Demo Prep</div>
+          <div class="tl-desc">Prepare story: show uploader perspective → contributor gets points → seeker finds & rates resource. Practice the narrative.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- §7: TEAM ROLES -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">§07</span>
+      <h2 class="section-title">Team Role Division</h2>
+    </div>
+    <div class="roles-grid">
+      <div class="role-card">
+        <span class="role-icon">🏗️</span>
+        <h4>Backend Lead</h4>
+        <p>Owns the API server and database</p>
+        <ul>
+          <li>Prisma schema & migrations</li>
+          <li>Auth endpoints (register/login)</li>
+          <li>Resource CRUD APIs</li>
+          <li>Search & filter logic</li>
+          <li>Points calculation service</li>
+        </ul>
+      </div>
+      <div class="role-card">
+        <span class="role-icon">📦</span>
+        <h4>Integration Dev</h4>
+        <p>File storage & cross-cutting concerns</p>
+        <ul>
+          <li>Cloudinary/storage setup</li>
+          <li>File upload middleware (multer)</li>
+          <li>Download tracking endpoint</li>
+          <li>Rating endpoints</li>
+          <li>API testing (Postman)</li>
+        </ul>
+      </div>
+      <div class="role-card">
+        <span class="role-icon">🎨</span>
+        <h4>Frontend Dev</h4>
+        <p>Owns the React SPA and UX</p>
+        <ul>
+          <li>Auth pages (login/register)</li>
+          <li>Browse & search UI</li>
+          <li>Upload form</li>
+          <li>Resource detail page</li>
+          <li>Routing & state management</li>
+        </ul>
+      </div>
+      <div class="role-card">
+        <span class="role-icon">✨</span>
+        <h4>UI/Polish + PM</h4>
+        <p>Design, demo, and coordination</p>
+        <ul>
+          <li>User profile & leaderboard</li>
+          <li>Responsive design polish</li>
+          <li>Seed data creation</li>
+          <li>Deployment pipeline</li>
+          <li>Presentation & demo prep</li>
+        </ul>
+      </div>
+    </div>
+    <br>
+    <div class="callout">
+      <strong>Sync Cadence Suggestion:</strong>
+      <p>Quick 5-min standup every 3 hours. Share a single Notion doc or GitHub Issues board for status. Merge to main frequently — one person owns merges to avoid conflicts. Use feature branches: <code>feat/auth</code>, <code>feat/upload</code>, <code>feat/search</code>.</p>
+    </div>
+  </div>
+
+  <!-- §8: PROJECT STRUCTURE -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">§08</span>
+      <h2 class="section-title">Recommended Folder Structure</h2>
+    </div>
+    <div class="two-col">
+      <div class="schema-box">
+<span class="comment">// Backend (Node + Express)</span>
+/server
+  /prisma
+    schema.prisma
+    seed.js
+  /src
+    /controllers
+      auth.controller.js
+      resource.controller.js
+      user.controller.js
+      rating.controller.js
+    /middleware
+      auth.middleware.js
+      upload.middleware.js
+    /routes
+      auth.routes.js
+      resource.routes.js
+      user.routes.js
+    /utils
+      jwt.utils.js
+      points.utils.js
+      cloudinary.js
+    app.js
+    server.js
+  .env
+  package.json
+      </div>
+      <div class="schema-box">
+<span class="comment">// Frontend (React + Vite)</span>
+/client
+  /src
+    /components
+      Navbar.jsx
+      ResourceCard.jsx
+      UploadForm.jsx
+      SearchBar.jsx
+      RatingStars.jsx
+      Leaderboard.jsx
+    /pages
+      Home.jsx
+      Browse.jsx
+      ResourceDetail.jsx
+      Upload.jsx
+      Profile.jsx
+      Login.jsx
+      Register.jsx
+    /hooks
+      useAuth.js
+      useSearch.js
+    /utils
+      api.js       <span class="comment">// axios instance</span>
+      helpers.js
+    /context
+      AuthContext.jsx
+    App.jsx
+    main.jsx
+  package.json
+      </div>
+    </div>
+  </div>
+
+  <!-- §9: DEMO STORY -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">§09</span>
+      <h2 class="section-title">Winning Demo Script</h2>
+    </div>
+    <div class="cards">
+      <div class="card red">
+        <div class="card-label">Step 1 — The Contributor</div>
+        <h3>Upload Flow</h3>
+        <p>Log in as "Priya" (3rd year CS). Show empty points = 0. Upload "Data Structures Complete Notes — Sem 4" with tags. Points jump to <strong>+10</strong>. Resource appears in catalog instantly.</p>
+      </div>
+      <div class="card yellow">
+        <div class="card-label">Step 2 — The Seeker</div>
+        <h3>Discovery Flow</h3>
+        <p>Log in as "Rahul" (2nd year CS, panicking before exam). Search "data structures". Filter by Semester 4. Finds Priya's notes — high rating, 50+ downloads. Reads description. Downloads.</p>
+      </div>
+      <div class="card green">
+        <div class="card-label">Step 3 — The Flywheel</div>
+        <h3>Recognition Loop</h3>
+        <p>Rahul rates the notes ⭐⭐⭐⭐⭐. Priya's profile now shows +12 points. Open the leaderboard — Priya appears on top. The community grows because <em>giving is rewarded</em>.</p>
+      </div>
+    </div>
+    <br>
+    <div class="callout callout-green">
+      <strong>Judges care about:</strong>
+      <p>1) Does it <em>actually work</em>? — Show real uploads, real downloads, real DB. 2) Is the problem clear? — Use the story above. 3) Is it scalable? — Mention indexed DB queries, file storage separation. 4) What's the unique insight? — "Most platforms are one-directional. We built a contribution incentive loop."</p>
+    </div>
+  </div>
+
+  <!-- §10: ENV & SETUP CHECKLIST -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">§10</span>
+      <h2 class="section-title">Setup Checklist (Do Right Now)</h2>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr><th>Task</th><th>Owner</th><th>Priority</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Install: Node.js 20+, npm, VS Code, Git, Postman</td>
+          <td>Everyone</td>
+          <td><span class="tag tag-red">CRITICAL</span></td>
+        </tr>
+        <tr>
+          <td>Install: PostgreSQL locally OR sign up for free Neon/Supabase DB</td>
+          <td>Backend Lead</td>
+          <td><span class="tag tag-red">CRITICAL</span></td>
+        </tr>
+        <tr>
+          <td>Sign up for Cloudinary (free tier) — get API key & secret</td>
+          <td>Integration Dev</td>
+          <td><span class="tag tag-red">CRITICAL</span></td>
+        </tr>
+        <tr>
+          <td>Create GitHub repo, add all team as collaborators</td>
+          <td>PM</td>
+          <td><span class="tag tag-red">CRITICAL</span></td>
+        </tr>
+        <tr>
+          <td>Read Prisma docs: schema, migrate, studio</td>
+          <td>Backend Lead</td>
+          <td><span class="tag tag-green">HIGH</span></td>
+        </tr>
+        <tr>
+          <td>Read multer + cloudinary-storage-v2 npm docs</td>
+          <td>Integration Dev</td>
+          <td><span class="tag tag-green">HIGH</span></td>
+        </tr>
+        <tr>
+          <td>Set up React + Vite project template locally, test it runs</td>
+          <td>Frontend Dev</td>
+          <td><span class="tag tag-green">HIGH</span></td>
+        </tr>
+        <tr>
+          <td>Install Tailwind CSS v3 in the React project</td>
+          <td>Frontend Dev</td>
+          <td><span class="tag tag-green">HIGH</span></td>
+        </tr>
+        <tr>
+          <td>Sign up for Render.com or Railway.app (deployment target)</td>
+          <td>PM</td>
+          <td><span class="tag tag-yellow">MEDIUM</span></td>
+        </tr>
+        <tr>
+          <td>Agree on .env variable names so everyone uses the same keys</td>
+          <td>Team</td>
+          <td><span class="tag tag-yellow">MEDIUM</span></td>
+        </tr>
+        <tr>
+          <td>Read multer file size limits, file type validation docs</td>
+          <td>Backend Lead</td>
+          <td><span class="tag tag-yellow">MEDIUM</span></td>
+        </tr>
+        <tr>
+          <td>Look up react-pdf for in-browser PDF preview</td>
+          <td>Frontend Dev</td>
+          <td><span class="tag tag-blue">LOW</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div>
+      <strong>CampusShare</strong><br>
+      <span>Campus Academic Resource Sharing Platform</span>
+    </div>
+    <div style="text-align:right">
+      Hackathon Strategy Document<br>
+      Prepared on Day 0 · Good luck tomorrow
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

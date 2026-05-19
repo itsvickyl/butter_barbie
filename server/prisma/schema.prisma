@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+
+
+model User {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email       String     @unique
+  name        String
+  department  String?
+  year        Int?
+  points      Int        @default(0)
+  resources   Resource[]
+  downloads   Download[]
+  ratings     Rating[]
+  createdAt   DateTime   @default(now()) @map("created_at")
+
+
+  @@map("profiles")
+}
+
+model Resource {
+  id            String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title         String
+  description   String?
+  type          ResourceType
+  subject       String
+  semester      Int
+  year          Int
+  fileUrl       String       @map("file_url")
+  fileName      String       @map("file_name")
+  fileSize      Int          @map("file_size")
+  downloadCount Int          @default(0) @map("download_count")
+  avgRating     Float        @default(0) @map("avg_rating")
+  tags          String[]
+  uploaderId    String       @map("uploader_id") @db.Uuid
+  uploader      User         @relation(fields: [uploaderId], references: [id])
+  downloads     Download[]
+  ratings       Rating[]
+  createdAt     DateTime     @default(now()) @map("created_at")
+
+  @@index([subject, semester])
+  @@map("resources")
+}
+
+model Download {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId       String   @map("user_id") @db.Uuid
+  user         User     @relation(fields: [userId], references: [id])
+  resourceId   String   @map("resource_id") @db.Uuid
+  resource     Resource @relation(fields: [resourceId], references: [id])
+  downloadedAt DateTime @default(now()) @map("downloaded_at")
+
+  @@map("downloads")
+}
+
+model Rating {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  score      Int
+  review     String?
+  userId     String   @map("user_id") @db.Uuid
+  user       User     @relation(fields: [userId], references: [id])
+  resourceId String   @map("resource_id") @db.Uuid
+  resource   Resource @relation(fields: [resourceId], references: [id])
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@unique([userId, resourceId])
+  @@map("ratings")
+}
+
+
+enum ResourceType {
+  NOTES
+  PAST_PAPER
+  REFERENCE_BOOK
+  PROJECT_REPORT
+  ASSIGNMENT
+}
+
+
+
