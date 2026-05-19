@@ -131,12 +131,6 @@ CampusShare incentivizes contributions through a points-based recognition system
 - The system creates a positive feedback loop — contributors upload more because they see recognition
 
 ---
-
-## Team — Butter Barbies
-
-- **PradeepArjunSam** — Frontend & UI
-- **hemantsaini404** — Backend & Database
-
 Built for **Yugastra — Ramaiah University Fest**
 
 ---
